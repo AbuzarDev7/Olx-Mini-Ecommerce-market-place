@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 
-const defaultProducts = [
+export const defaultProducts = [
   {
     docid: "demo1",
     title: "iPhone 13 Pro",

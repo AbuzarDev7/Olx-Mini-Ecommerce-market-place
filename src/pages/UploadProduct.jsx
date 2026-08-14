@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import Swal from 'sweetalert2';
 
 export default function UploadProduct() {
@@ -121,8 +123,10 @@ export default function UploadProduct() {
   };
 
   return (
-    <div className="upload-page-body">
-      <main className="main-content">
+    <div className="page-wrapper">
+      <Navbar />
+
+      <main className="main-wrapper">
         <div className="upload-container">
           <h2><i className="fa-solid fa-cloud-arrow-up" style={{ color: '#002f34' }}></i> Post New Product</h2>
           
@@ -215,6 +219,8 @@ export default function UploadProduct() {
           </form>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

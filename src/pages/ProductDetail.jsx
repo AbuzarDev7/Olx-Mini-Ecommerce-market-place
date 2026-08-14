@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { defaultProducts } from './Home';
 import Swal from 'sweetalert2';
 
 export default function ProductDetail() {
@@ -22,6 +25,15 @@ export default function ProductDetail() {
     }
 
     const fetchProduct = async () => {
+      // First check if it's a default demo product
+      const demoMatch = defaultProducts.find(p => p.docid === itemId);
+      if (demoMatch) {
+        setProduct(demoMatch);
+        setLoading(false);
+        return;
+      }
+
+      // Otherwise fetch from Firestore
       try {
         const docRef = doc(db, 'carts', itemId);
         const docSnap = await getDoc(docRef);
@@ -33,6 +45,7 @@ export default function ProductDetail() {
         }
       } catch (err) {
         console.error('Error fetching product details:', err);
+        Swal.fire('Error', 'Could not load product details.', 'error');
       } finally {
         setLoading(false);
       }
@@ -43,6 +56,11 @@ export default function ProductDetail() {
 
   const handleEdit = async () => {
     if (!product) return;
+
+    if (product.docid?.startsWith('demo')) {
+      Swal.fire('Demo Item', 'Demo items cannot be edited on live Firestore.', 'info');
+      return;
+    }
 
     const { value: formValues } = await Swal.fire({
       title: 'Edit Product Details',
@@ -61,7 +79,7 @@ export default function ProductDetail() {
           title: document.getElementById('swal-title').value,
           price: document.getElementById('swal-price').value,
           description: document.getElementById('swal-desc').value
-        }
+        };
       }
     });
 
@@ -95,6 +113,11 @@ export default function ProductDetail() {
   const handleDelete = async () => {
     if (!product) return;
 
+    if (product.docid?.startsWith('demo')) {
+      Swal.fire('Demo Item', 'Demo items cannot be deleted.', 'info');
+      return;
+    }
+
     const result = await Swal.fire({
       title: 'Delete Product?',
       text: 'This action cannot be undone!',
@@ -123,14 +146,9 @@ export default function ProductDetail() {
 
   return (
     <div className="page-wrapper">
-      <header className="top-header">
-        <Link to="/">
-          Back to Marketplace
-        </Link>
-        <span style={{ color: 'white', fontWeight: 700, fontSize: '18px' }}>OLX Clone</span>
-      </header>
+      <Navbar />
 
-      <main className="main-wrapper">
+      <main className="main-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '40px' }}>
         {loading ? (
           <div className="loading-spinner">
             Loading product details...
@@ -155,13 +173,17 @@ export default function ProductDetail() {
               <p className="description">{product.description || 'No description available.'}</p>
 
               <div className="actions">
-                <button className="buy-now" onClick={() => Swal.fire('Contact Seller', `Seller UID: ${product.uid || 'N/A'}`, 'info')}>
-                  Contact Seller
+                <button
+                  className="more-btn"
+                  style={{ padding: '12px', fontSize: '15px' }}
+                  onClick={() => Swal.fire('Contact Seller', `Item ID: ${product.docid}\nCity: ${product.location || 'Pakistan'}`, 'info')}
+                >
+                  <i className="fa-solid fa-phone"></i> Contact Seller
                 </button>
               </div>
 
               {isOwner && (
-                <div className="edit-delete">
+                <div className="edit-delete" style={{ marginTop: '16px' }}>
                   <button className="edit" onClick={handleEdit}>
                     Edit Listing
                   </button>
@@ -174,6 +196,8 @@ export default function ProductDetail() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }
