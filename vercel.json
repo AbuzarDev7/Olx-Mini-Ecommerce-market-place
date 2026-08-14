@@ -6,8 +6,12 @@
     { "src": "/register", "dest": "/regsiter.html" },
     { "src": "/register.html", "dest": "/regsiter.html" },
     { "src": "/login", "dest": "/login.html" },
+    { "src": "/login.html", "dest": "/login.html" },
     { "src": "/upload", "dest": "/upload.html" },
+    { "src": "/upload.html", "dest": "/upload.html" },
     { "src": "/info", "dest": "/info.html" },
+    { "src": "/info.html", "dest": "/info.html" },
+    { "src": "^/(?!.*\\.).*$", "dest": "/index.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
