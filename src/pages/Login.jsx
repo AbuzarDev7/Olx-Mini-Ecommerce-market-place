@@ -47,13 +47,22 @@ export default function Login() {
       await Swal.fire({
         icon: 'success',
         title: 'Google Sign-In Successful',
+        text: 'Logged in successfully!',
         timer: 1500,
         showConfirmButton: false
       });
       navigate('/');
     } catch (error) {
       console.error('Google login error:', error);
-      Swal.fire('Sign-In Failed', error.message, 'error');
+      let msg = error.message;
+      if (error.code === 'auth/unauthorized-domain') {
+        msg = `Domain '${window.location.hostname}' is not authorized in Firebase Console.\n\nPlease add '${window.location.hostname}' in Firebase Console > Authentication > Settings > Authorized Domains.`;
+      } else if (error.code === 'auth/popup-blocked') {
+        msg = 'Pop-up was blocked by your browser. Please allow pop-ups for Google Sign-In.';
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        msg = 'Sign-in pop-up was closed before completion.';
+      }
+      Swal.fire('Google Sign-In Failed', msg, 'error');
     }
   };
 

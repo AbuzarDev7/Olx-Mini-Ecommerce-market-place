@@ -11,7 +11,7 @@ export default function Register() {
   const [uploadingImg, setUploadingImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { registerUser } = useAuth();
+  const { registerUser, googleSignIn, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleImageUpload = async (e) => {
@@ -77,19 +77,52 @@ export default function Register() {
     setLoading(true);
     try {
       await registerUser(email.trim(), password, fullname.trim(), profileImgUrl);
+      // Logout so user must log in via /login as requested
+      await logout();
       await Swal.fire({
         icon: 'success',
-        title: 'Account Created!',
-        text: 'Registered successfully. Redirecting to home...',
+        title: 'Account Created Successfully!',
+        text: 'Your account has been created. Please log in with your email and password.',
+        confirmButtonColor: '#002f34',
+        confirmButtonText: 'Go to Login'
+      });
+      navigate('/login');
+    } catch (error) {
+      console.error('Registration Error:', error);
+      let errorMsg = error.message;
+      if (error.code === 'auth/email-already-in-use') {
+        errorMsg = 'This email is already registered. Please log in instead.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMsg = 'Password should be at least 6 characters long.';
+      }
+      Swal.fire('Registration Failed', errorMsg, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleSignIn();
+      await Swal.fire({
+        icon: 'success',
+        title: 'Google Sign-In Successful',
+        text: 'Logged in successfully!',
         timer: 1500,
         showConfirmButton: false
       });
       navigate('/');
     } catch (error) {
-      console.error('Registration Error:', error);
-      Swal.fire('Registration Failed', error.message, 'error');
-    } finally {
-      setLoading(false);
+      console.error('Google login error:', error);
+      let msg = error.message;
+      if (error.code === 'auth/unauthorized-domain') {
+        msg = `Domain '${window.location.hostname}' is not authorized in Firebase Console.\n\nPlease add '${window.location.hostname}' in Firebase Console > Authentication > Settings > Authorized Domains.`;
+      } else if (error.code === 'auth/popup-blocked') {
+        msg = 'Pop-up blocked by browser. Please allow pop-ups for Google Sign-In.';
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        msg = 'Sign-in pop-up was closed before completion.';
+      }
+      Swal.fire('Google Sign-In Error', msg, 'error');
     }
   };
 
@@ -103,7 +136,7 @@ export default function Register() {
             </Link>
           </div>
           <div>
-            <h1 className="heading">Create Your Account</h1>
+            <h1 className="heading">Create Account</h1>
             <div className="subtitle">Join Marketplace — buy & sell in your city</div>
           </div>
         </div>
@@ -138,7 +171,7 @@ export default function Register() {
             <input
               id="inpPassword"
               type="password"
-              placeholder="Choose a strong password"
+              placeholder="Choose a strong password (min 6 chars)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -170,10 +203,10 @@ export default function Register() {
                   src={profileImgUrl}
                   alt="Profile Preview"
                   style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     borderRadius: '50%',
-                    border: '3px solid #002f34',
+                    border: '2px solid #002f34',
                     objectFit: 'cover',
                     display: 'inline-block'
                   }}
@@ -187,7 +220,16 @@ export default function Register() {
           </button>
         </form>
 
-        <div className="login-link">
+        <div className="or">OR</div>
+
+        <div className="social-login">
+          <div className="social-btn" onClick={handleGoogleLogin}>
+            <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google Logo" />
+            Continue with Google
+          </div>
+        </div>
+
+        <div className="login-link" style={{ marginTop: '20px' }}>
           Already have an account? <Link to="/login">Log In</Link>
         </div>
       </main>
