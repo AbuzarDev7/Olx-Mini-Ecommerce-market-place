@@ -3,56 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLX Clone</title>
+  <title>OLX Clone - Buy & Sell Marketplace</title>
+  <meta name="description" content="OLX Clone - Buy and sell products online. A mini ecommerce marketplace.">
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- CSS File -->
-  <link rel="stylesheet" href="./css/home.css">
 </head>
 <body>
-
-  <!-- ===== Navbar ===== -->
-  <nav>
-    <div class="logo-section">
-      <div class="logo">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvIV2aGioPGBnNrovx6cNrBRbq3nSLDpI1Gpk2tuhzJLx0Si8B-z7P2qBhrrGq7vkJwFQ&usqp=CAU" alt="OLX Logo">
-      </div>
-    <a href="upload.html">
-      <button id="upload-btn" class="upload-btn">
-        <i class="fa-solid fa-upload"></i> Upload Product
-      </button>
-    </a>
-      
-    </div>
-
-    <!-- ✅ Responsive Toggle -->
-    <input type="checkbox" id="menu-toggle">
-    <label for="menu-toggle" class="menu-icon">
-      <i class="fa-solid fa-bars"></i>
-    </label>
-
-    <div class="user-section">
-      <div class="profile" id="userProfile" title="Your Profile" style="display: none;">
-        <img id="userImg" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile">
-      </div>
-
-      <a href="login.html" id="loginBtnLink">
-        <button class="login-btn" id="loginBtn">
-          <i class="fa-solid fa-right-to-bracket"></i> Login
-        </button>
-      </a>
-
-      <button class="logout-btn" id="logoutBtn" style="display: none;">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-      </button>
-    </div>
-  </nav>
-  <!-- ===== Product Section ===== -->
-  <div class="product-container" id="product-cards"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="module" src="./scritp/app.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
